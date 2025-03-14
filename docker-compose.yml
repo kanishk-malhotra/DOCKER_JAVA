@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Spring Boot Application
+  spring-management-system:
+    image: kanishk07051992/spring-management-system:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/employee
+    - SPRING_DATASOURCE_USERNAME=root
+    - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: employee  # Use the same name as your database in the dump file
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d  # Mount the db folder containing your SQL dump
+
+volumes:
+  mysql-data:
+    driver: local
